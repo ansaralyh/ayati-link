@@ -88,7 +88,8 @@ export default function Home() {
 
   const handleQrSuccess = (result: string) => {
     // If the QR code contains a URL to this app, we could handle it here
-    // For now, just close the scanner
+    // For now, just close the scanner jkiowef 
+    console.log("Hello")
     setShowScanner(false);
     // You could also navigate to a specific verse if the QR contains that info
     if (result.includes("verse=")) {
