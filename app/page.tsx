@@ -20,7 +20,6 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { verses } from "./data/verses";
 
-// Add the audioRef and muted state
 export default function Home() {
   const [currentVerseIndex, setCurrentVerseIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -32,12 +31,10 @@ export default function Home() {
 
   const currentVerse = verses[currentVerseIndex];
 
-  // Update the useEffect to handle audio playback
   useEffect(() => {
     let interval: NodeJS.Timeout;
 
     if (isPlaying) {
-      // Play audio when isPlaying is true
       if (audioRef.current) {
         audioRef.current.play().catch((error) => {
           console.error("Audio playback failed:", error);
@@ -46,9 +43,8 @@ export default function Home() {
 
       interval = setInterval(() => {
         setCurrentVerseIndex((prev) => (prev + 1) % verses.length);
-      }, 10000); // Change verse every 10 seconds
+      }, 86400000);
     } else {
-      // Pause audio when isPlaying is false
       if (audioRef.current) {
         audioRef.current.pause();
       }
@@ -57,9 +53,7 @@ export default function Home() {
     return () => clearInterval(interval);
   }, [isPlaying]);
 
-  // Add effect to handle verse changes
   useEffect(() => {
-    // When verse changes, update audio source and play if isPlaying
     if (audioRef.current) {
       audioRef.current.src = `/audio/${currentVerse.audioFile}`;
       audioRef.current.load();
@@ -71,7 +65,6 @@ export default function Home() {
     }
   }, [currentVerse.audioFile, isPlaying]);
 
-  // Update the mute effect
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.muted = isMuted;
@@ -87,11 +80,8 @@ export default function Home() {
   };
 
   const handleQrSuccess = (result: string) => {
-    // If the QR code contains a URL to this app, we could handle it here
-    // For now, just close the scanner jkiowef 
-    console.log("Hello")
+    console.log("Hello");
     setShowScanner(false);
-    // You could also navigate to a specific verse if the QR contains that info
     if (result.includes("verse=")) {
       const verseNumber = Number.parseInt(result.split("verse=")[1]);
       if (
@@ -135,14 +125,21 @@ export default function Home() {
 
       {/* Header */}
       <header className="relative z-10 p-4 flex justify-end items-center">
-      <div className="flex items-center gap-2">
-          <Switch checked={theme === "dark"} onCheckedChange={() => setTheme(theme === "dark" ? "light" : "dark")} />
-          {theme === "dark" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
-        </div>
+        <div className="flex items-center gap-2">
+          <Switch
+            checked={theme === "dark"}
+            onCheckedChange={() => setTheme(theme === "dark" ? "light" : "dark")}
+          />
+          {theme === "dark" ? (
+            <Moon className="h-5 w-5" />
+          ) : (
+            <Sun className="h-5 w-5" />
+          )}
+        </div>
       </header>
 
       {/* Main Content */}
-      <div className=" flex-1 flex flex-col items-center justify-center relative z-10 px-4 py-8">
+      <div className="flex-1 flex flex-col items-center justify-center relative z-10 px-4 py-8">
         <div className="flex absolute -top-14 items-center justify-center">
           <Image
             src="/logo.png"
@@ -152,22 +149,24 @@ export default function Home() {
             className="object-contain"
           />
         </div>
-        <div className="max-w-4xl w-full p-6 mt-16 ">
-          <h3 className="text-19px font-times text-center mb-2">
+        <div className="max-w-4xl w-full p-6 mt-16">
+          <h3 className="text-lg md:text-xl font-times text-center mb-2">
             L'interdiction
           </h3>
-          <h2 className="text-center text-3xl font-times font-bold mb-2">
+          <h2 className="text-center text-2xl md:text-3xl font-times font-bold mb-2">
             {currentVerse.surah}
           </h2>
           <h3 className="text-center text-xl font-bold mb-6">
             Verset {currentVerse.verseNumber}
           </h3>
 
-          <p className="text-right font-arabic text-3xl leading-loose mb-6 rtl">
+          <p className="text-right font-arabic text-2xl md:text-3xl leading-loose mb-6 rtl">
             {currentVerse.arabic}
           </p>
 
-          <p className="text-3xl font-times mb-8">{currentVerse.french}</p>
+          <p className="text-2xl md:text-3xl font-times mb-8">
+            {currentVerse.french}
+          </p>
 
           <div className="text-center">
             <Button variant="ghost" className="text-sm">
@@ -177,13 +176,18 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="flex justify-between items-center">
+      {/* Controls and Footer */}
+      <div className="flex flex-col md:flex-row justify-between items-center p-4">
         {/* Controls */}
-        <div className="relative z-10 p-4 flex justify-center items-center gap-4 mb-4">
-          {/* <Button className="h-10 w-10 rounded-full" variant="outline" size="icon" onClick={handlePrevious}>
-          <SkipBack className="h-4 w-4" />
-        </Button> */}
-
+        <div className="relative z-10 flex justify-center items-center gap-4 mb-4">
+        <Button
+            className="h-10 w-10 border-2 rounded-full"
+            variant="outline"
+            size="icon"
+            onClick={handlePrevious}
+          >
+            <SkipBack className="h-4 w-4" />
+          </Button>
           <Button
             className="h-10 w-10 border-2 rounded-full"
             variant="outline"
@@ -205,6 +209,7 @@ export default function Home() {
           >
             <SkipForward className="h-4 w-4" />
           </Button>
+         
 
           <Button
             className="h-10 w-10 border-2 rounded-full"
@@ -228,21 +233,18 @@ export default function Home() {
             <QrCode className="h-4 w-4" />
           </Button>
         </div>
-        <p className="max-w-[150px] font-extrabold text-medium">
-          A project by AYATI LINK © {new Date().getFullYear()}
-        </p>
 
         {/* Footer */}
-        <footer className="relative z-10 p-4 text-center text-sm">
-          <div className="flex justify-center gap-4 mb-2">
-            <button className="bg-white  rounded-3xl p-3 shadow-2xl font-medium text-sm">
+        <footer className="relative z-10 text-center text-sm">
+          <div className="flex flex-col md:flex-row justify-center gap-4 mb-2">
+            <Button className="bg-white rounded-3xl text-black p-3 shadow-2xl font-medium text-sm">
               AJOUTER À CHROME
-            </button>
-            <button className="bg-white rounded-3xl p-3 shadow-2xl font-medium text-sm">
+            </Button>
+            <Button className="bg-white rounded-3xl p-3 text-black shadow-2xl font-medium text-sm">
               S&apos;ABONNER
-            </button>
+            </Button>
           </div>
-          <div className="flex justify-center items-center gap-6">
+          <div className="flex flex-col md:flex-row justify-center items-center gap-6">
             <p className="max-w-[150px] font-extrabold text-medium">
               A project by AYATI LINK © {new Date().getFullYear()}
             </p>
