@@ -107,7 +107,7 @@ export default function Home() {
       {/* Background Image */}
       <div className="fixed inset-0 z-0">
         <Image
-          src="/ima.jpg"
+         src={theme === "dark" ? "/dark.png" : "/ima.jpg"}
           alt="Mosque Background"
           fill
           className="object-cover"
